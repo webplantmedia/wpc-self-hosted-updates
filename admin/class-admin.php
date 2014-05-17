@@ -31,6 +31,14 @@ class WPC_Self_Hosted_Updates_Admin {
 	protected static $instance = null;
 
 	/**
+	 * Replace with your own URL's
+	 *
+	 * @var string
+	 */
+	protected $check_themes_url = 'http://api.webplantmedia.com/themes/update-check/1.1/';
+	protected $check_plugins_url = 'http://api.webplantmedia.com/plugins/update-check/1.1/';
+
+	/**
 	 * Initialize the plugin by loading admin scripts & styles and adding a
 	 * settings page and menu.
 	 *
@@ -138,7 +146,7 @@ class WPC_Self_Hosted_Updates_Admin {
 			'user-agent'	=> 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
 		);
 
-		$url = $http_url = 'http://api.webplantmedia.com/themes/update-check/1.1/';
+		$url = $http_url = $this->check_themes_url;
 		// if ( $ssl = wp_http_supports( array( 'ssl' ) ) )
 			// $url = set_url_scheme( $url, 'https' );
 
@@ -194,7 +202,7 @@ class WPC_Self_Hosted_Updates_Admin {
 			'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
 		);
 
-		$url = $http_url = 'http://api.webplantmedia.com/plugins/update-check/1.1/';
+		$url = $http_url = $this->check_plugins_url;
 		// if ( $ssl = wp_http_supports( array( 'ssl' ) ) )
 			// $url = set_url_scheme( $url, 'https' );
 

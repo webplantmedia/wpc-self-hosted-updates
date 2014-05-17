@@ -2,7 +2,7 @@
 
 Contributors: cbaldelomar
 Donate link: http://webplantmedia.com/donate/
-Tags: insert javascript, insert js, insert html, insert css, html, javascript, js, css, code, custom code, google analytics, head section, head, footer section, footer, head area, footer area, top of page, scripts, cutsom scripts, insert scripts
+Tags: self hosted updates, theme update, plugin update, custom update, update plugins, update themes
 Requires at least: 3.9.1
 Tested up to: 3.9.1
 Stable tag: trunk
@@ -13,7 +13,7 @@ Easily update self hosted themes and plugins through the WordPress dashboard.
 
 == Description ==
 
-This plugin makes it easy for developer to enable dashboard updates for their themes and plugins that are hosted on their own servers.
+This plugin makes it easy for developer to enable dashboard updates for themes and plugins that are hosted on their own servers.
 
 [Live Demo & Documentation](http://webplantmedia.com/starter-themes/wordpresscanvas/features/plugins/wpc-self-hosted-updates/)
 
@@ -35,10 +35,6 @@ Thank you so much for even considering supporting my work. If you have benefited
 2. Upload the `wpc-self-hosted-updates` folder to your `/wp-content/plugins` directory.
 3. In your WordPress dashboard, head over to the *Plugins* section.
 4. Activate *WP Canvas - Self Hosted Updates*.
-
-== Frequently Asked Questions ==
-
-### How do I use this plugin
 
 == Screenshots ==
 
