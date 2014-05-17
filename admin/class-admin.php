@@ -37,13 +37,9 @@ class WPC_Self_Hosted_Updates_Admin {
 	 * @since     1.0.0
 	 */
 	private function __construct() {
-		// to debug
-		set_site_transient( 'update_themes' , null );
+		$this->force_check();
 
 		add_filter( 'pre_set_site_transient_update_themes', array( &$this, 'theme_update' ) );
-
-		// This MUST come before we get details about the plugins so the headers are correctly retrieved
-		add_filter( 'extra_theme_headers', array( $this, 'add_theme_headers' ) );
 	}
 
 	/**
@@ -63,7 +59,19 @@ class WPC_Self_Hosted_Updates_Admin {
 		return self::$instance;
 	}
 
-	function theme_update($updates) {
+	public function force_check() {
+		$force_check = ! empty( $_GET['force-check'] );
+
+		if ( $force_check ) {
+			$admin_page = basename( $_SERVER['SCRIPT_NAME'] );
+
+			if ( 'update-core.php' == $admin_page ) {
+				set_site_transient( 'update_themes' , null );
+			}
+		}
+	}
+
+	public function theme_update($updates) {
 		if ( isset( $updates->checked ) ) {
 			$updates = $this->theme_check( $updates );
 		}
@@ -72,12 +80,17 @@ class WPC_Self_Hosted_Updates_Admin {
 	}
 
 	public function theme_check($updates) {
+		global $wp_version;
 
 		add_filter( 'http_request_args', array( &$this, 'http_timeout' ), 10, 1 );
 
 		$installed_themes = wp_get_themes();
+		$translations = wp_get_installed_translations( 'themes' );
 		
 		$themes = $checked = $request = array();
+
+		// Put slug of current theme into request.
+		$request['active'] = get_option( 'stylesheet' );
 
 		foreach ( $installed_themes as $theme ) {
 			$checked[ $theme->get_stylesheet() ] = $theme->get('Version');
@@ -88,36 +101,50 @@ class WPC_Self_Hosted_Updates_Admin {
 				'Version'    => $theme->get('Version'),
 				'Author'     => $theme->get('Author'),
 				'Author URI' => $theme->get('AuthorURI'),
-				'Self Hosted URI' => $theme->get('Self Hosted URI'),
 				'Template'   => $theme->get_template(),
 				'Stylesheet' => $theme->get_stylesheet(),
 			);
 		}
 
-		$installed = wp_get_theme();
-		// get parent template, even if using child theme
-		$template = $installed->get_template();
-		if ( is_child_theme() ) {
-			$version = $installed->parent()->Version;
-		}
-		else {
-			$version = $installed->Version;
-		}
-		
+		$request['themes'] = $themes;
+
+		$locales = array( get_locale() );
+		/**
+		 * Filter the locales requested for theme translations.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param array $locales Theme locale. Default is current locale of the site.
+		 */
+		$locales = apply_filters( 'themes_update_check_locales', $locales );
+
 		$options = array(
-			'timeout'		=> 3,
-			'body'			=> array( 'version' => $version, 'template' => $template ),
-			'user-agent'	=> 'WordPress/' . get_bloginfo('version') . '; ' . get_bloginfo( 'url' )
+			'timeout' => ( ( defined('DOING_CRON') && DOING_CRON ) ? 30 : 3),
+			'body' => array(
+				'themes'       => json_encode( $request ),
+				'translations' => json_encode( $translations ),
+				'locale'       => json_encode( $locales ),
+			),
+			'user-agent'	=> 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
 		);
 
-		$raw_response = wp_remote_post( 'http://update.webplantmedia.com/', $options );
+		$url = $http_url = 'http://api.webplantmedia.com/themes/update-check/1.1/';
+		// if ( $ssl = wp_http_supports( array( 'ssl' ) ) )
+			// $url = set_url_scheme( $url, 'https' );
+
+		$raw_response = wp_remote_post( $url, $options );
+		/* if ( $ssl && is_wp_error( $raw_response ) ) {
+			trigger_error( __( 'An unexpected error occurred. Something may be wrong with WebPlantMedia.com or this server&#8217;s configuration. If you continue to have problems, please try the <a href="http://webplantmedia.com/support/">support forums</a>.' ) . ' ' . __( '(WordPress could not establish a secure connection to WebPlantMedia.com. Please contact your server administrator.)' ), headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE );
+			$raw_response = wp_remote_post( $http_url, $options );
+		} */
 
 		if ( is_wp_error( $raw_response ) || 200 != wp_remote_retrieve_response_code( $raw_response ) )
 			return false;
 
-		$response = maybe_unserialize( wp_remote_retrieve_body( $raw_response ) );
-		if ( ! empty( $response ) && is_array( $response ) && isset( $response[ $template ] ) ) {
-			$updates->response[ $template ] = $response[ $template ];
+		$response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
+
+		if ( ! empty( $response ) && is_array( $response ) ) {
+			$updates->response = array_merge( $updates->response, $response );
 		}
 
 		remove_filter( 'http_request_args' ,array( &$this,'http_timeout' ) );
@@ -125,23 +152,10 @@ class WPC_Self_Hosted_Updates_Admin {
 		return $updates;
 	}
 
-	public function http_timeout($req) {
+	public function http_timeout( $req ) {
 		// increase timeout for api request
 		$req["timeout"] = 300;
+
 		return $req;
-	}
-
-	/**
-	 * Add extra headers to wp_get_themes()
-	 *
-	 * @since 1.0.0
-	 * @param $extra_headers
-	 *
-	 * @return array
-	 */
-	public function add_theme_headers( $extra_headers ) {
-		$extra_headers[] = 'Self Hosted URI';
-
-		return $extra_headers;
 	}
 }
