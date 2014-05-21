@@ -45,6 +45,8 @@ class WPC_Self_Hosted_Updates_Admin {
 	 * @since     1.0.0
 	 */
 	private function __construct() {
+		define( 'WPC_SELF_HOSTED_UPDATES_IS_ACTIVATED', true );
+
 		$this->force_check();
 
 		add_filter( 'pre_set_site_transient_update_themes', array( &$this, 'update_themes' ) );
