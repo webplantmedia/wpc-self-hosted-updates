@@ -17,15 +17,15 @@ This plugin makes it easy for developer to enable dashboard updates for themes a
 
 [Live Demo & Documentation](http://webplantmedia.com/starter-themes/wordpresscanvas/features/plugins/wpc-self-hosted-updates/)
 
-### Professional Support
+= Professional Support =
 
 If you need professional plugin support from me, the plugin author, you can contact me at [Web Plant Media](http://webplantmedia.com/).
 
-### Plugin Development
+= Plugin Development =
 
 If you're a theme author, plugin author, or just a code hobbyist, you can follow the development of this plugin on it's [GitHub repository](https://github.com/webplantmedia/wpc-self-hosted-updates). 
 
-### Donations
+= Donations =
 
 Thank you so much for even considering supporting my work. If you have benefited from my WordPress plugins, or are appreciative of my customer support, and feel led to send me a monetary donation, please follow the link [here](http://webplantmedia.com/donate/). I am truly thankful for your hard earned giving.
 
@@ -42,10 +42,14 @@ Thank you so much for even considering supporting my work. If you have benefited
 
 == Changelog ==
 
-### Version 1.1
+= Version 1.2 =
+
+* Fixed bug with plugins not appearing in update list
+
+= Version 1.1 =
 
 * added constant to check if activated
 
-### Version 1.0
+= Version 1.0 =
 
 * Plugin released.  Everything is new!

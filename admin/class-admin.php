@@ -30,7 +30,7 @@ class WPC_Self_Hosted_Updates_Admin {
 	 */
 	protected static $instance = null;
 
-	const VERSION = '1.1';
+	const VERSION = '1.2';
 
 	/**
 	 * Replace with your own URL's

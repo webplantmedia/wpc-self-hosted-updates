@@ -44,6 +44,10 @@ Thank you so much for even considering supporting my work. If you have benefited
 
 ## Changelog ##
 
+### Version 1.2
+
+* Fixed bug with plugins not appearing in update list
+
 ### Version 1.1
 
 * added constant to check if activated
