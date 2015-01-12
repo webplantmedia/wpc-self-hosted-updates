@@ -53,6 +53,8 @@ class WPC_Self_Hosted_Updates_Admin {
 
 		add_filter( 'pre_set_site_transient_update_themes', array( &$this, 'update_themes' ) );
 		add_filter( 'pre_set_site_transient_update_plugins', array( &$this, 'update_plugins' ) );
+
+		add_filter( 'plugins_api', array( &$this, 'plugins_api' ), 10, 3 );
 	}
 
 	/**
@@ -83,6 +85,31 @@ class WPC_Self_Hosted_Updates_Admin {
 				set_site_transient( 'update_plugins' , null );
 			}
 		}
+	}
+
+	public function plugins_api( $res, $action, $args ) {
+		$url = $http_url = $this->check_plugins_url;
+		// if ( $ssl = wp_http_supports( array( 'ssl' ) ) )
+			// $url = set_url_scheme( $url, 'https' );
+
+		$args = array(
+			'timeout' => 15,
+			'body' => array(
+				'action' => $action,
+				'request' => serialize( $args )
+			)
+		);
+		$request = wp_remote_post( $url, $args );
+
+		if ( is_wp_error($request) ) {
+			return false;
+		} else {
+			$res = maybe_unserialize( wp_remote_retrieve_body( $request ) );
+			if ( ! is_object( $res ) && ! is_array( $res ) )
+				return false;
+		}
+
+		return $res;
 	}
 
 	public function update_plugins($updates) {
