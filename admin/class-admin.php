@@ -167,12 +167,19 @@ class WPC_Self_Hosted_Updates_Admin {
 		 */
 		$locales = apply_filters( 'themes_update_check_locales', $locales );
 
+		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
+			$timeout = 30;
+		} else {
+			// Three seconds, plus one extra second for every 10 themes
+			$timeout = 3 + (int) ( count( $themes ) / 10 );
+		}
+
 		$options = array(
-			'timeout' => ( ( defined('DOING_CRON') && DOING_CRON ) ? 30 : 3),
+			'timeout' => $timeout,
 			'body' => array(
-				'themes'       => json_encode( $request ),
-				'translations' => json_encode( $translations ),
-				'locale'       => json_encode( $locales ),
+				'themes'       => wp_json_encode( $request ),
+				'translations' => wp_json_encode( $translations ),
+				'locale'       => wp_json_encode( $locales ),
 			),
 			'user-agent'	=> 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
 		);
@@ -223,12 +230,20 @@ class WPC_Self_Hosted_Updates_Admin {
 		 */
 		$locales = apply_filters( 'plugins_update_check_locales', $locales );
 
+		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
+			$timeout = 30;
+		} else {
+			// Three seconds, plus one extra second for every 10 plugins
+			$timeout = 3 + (int) ( count( $plugins ) / 10 );
+		}
+
 		$options = array(
-			'timeout' => ( ( defined('DOING_CRON') && DOING_CRON ) ? 30 : 3),
+			'timeout' => $timeout,
 			'body' => array(
-				'plugins'      => json_encode( $to_send ),
-				'translations' => json_encode( $translations ),
-				'locale'       => json_encode( $locales ),
+				'plugins'      => wp_json_encode( $to_send ),
+				'translations' => wp_json_encode( $translations ),
+				'locale'       => wp_json_encode( $locales ),
+				'all'          => wp_json_encode( true ),
 			),
 			'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
 		);
