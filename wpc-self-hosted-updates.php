@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: WP Canvas - Self Hosted Updates
-Plugin URI: http://webplantmedia.com/starter-themes/wordpresscanvas/features/plugins/wpc-self-hosted-updates/
+Plugin Name: Self Hosted Updates by Angie Makes
+Plugin URI: http://angiemakes.com/feminine-wordpress-blog-themes-women/
 Description: Easily update self hosted themes and plugins through the WordPress dashboard.
 Author: Chris Baldelomar
-Author URI: http://webplantmedia.com/
-Version: 1.3
+Author URI: http://angiemakes.com/
+Version: 1.4
 License: GPLv2 or later
 */
 
